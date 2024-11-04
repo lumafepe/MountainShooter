@@ -119,6 +119,7 @@ def main():
         screen.blit(level_text, (WIDTH - 150, 10))
 
         pygame.display.update()
+        pygame.time.delay(1000)
         
         print(f"Altura das Montanhas: {heights}")
         
