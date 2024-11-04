@@ -4,15 +4,15 @@ import sys
 from preencher import disparaMontanhaMaisAlta
 import math
 
-# Initialize pygame
+# Inicializar pygame
 pygame.init()
 
-# Screen dimensions
+# Dimensões da janela
 WIDTH, HEIGHT = 600, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Mountain Destroyer")
+pygame.display.set_caption("Destroi a Montanha Mais Alta")
 
-# Colors
+# Cores
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -24,13 +24,13 @@ MAX_HEIGHT = 200
 MIN_WIDTH = 1
 MAX_WIDTH = 10
 
-# Font for levels, heights, and indices
+# Fonte de letra para niveis alturas e índices
 font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 24)
-win_font = pygame.font.Font(None, 72)  # Larger font for win message
+win_font = pygame.font.Font(None, 72) 
 
 
-# Function to generate mountains
+# Função para gerar montanhas de altura aleatória
 def generate_mountains(num_mountains):
     heights = [
         random.randint(MIN_HEIGHT, MAX_HEIGHT) for _ in range(num_mountains)
@@ -38,56 +38,56 @@ def generate_mountains(num_mountains):
     return heights
 
 
-# Function to display connected mountain peaks with outlines
+# Função para desenhar montanhas
 def draw_mountains(heights):
     mountain_width = WIDTH // len(heights)
     peak_points = []
 
-    # Create the peak points for the mountain range
+    # Calcular picos das montanhas como x,y
     for i, height in enumerate(heights):
         peak_x = i * mountain_width + mountain_width // 2
         peak_y = HEIGHT - height
         peak_points.append((peak_x, peak_y))
 
-    # Add the first and last points to connect the range to the bottom of the screen
+    # Adicionar ponto inicial e final para a montanha começar e terminar no chão
     peak_points = [(0, HEIGHT)] + peak_points + [(WIDTH, HEIGHT)]
 
-    # Draw the filled mountain range
+    # Desenhar montanhas
     pygame.draw.polygon(screen, GREEN, peak_points)
 
-    # Draw the outline of the mountain range
+    # Desenhar contorno das montanhas
     pygame.draw.lines(screen, BLACK, False, peak_points, 5)
 
-    # Display the height at the top of each peak and the index at the bottom
+    # Mostrar altura e índice das montanhas
     for i, height in enumerate(heights):
         peak_x = i * mountain_width + mountain_width // 2
         peak_y = HEIGHT - height
 
-        # Display the height at the top of the peak
+        # Mostra a altura no topo da montanha
         height_text = small_font.render(str(height), True, BLACK)
         screen.blit(height_text, (peak_x - 10, peak_y - 30))
 
-        # Display the index at the bottom of the peak
+        # Mostra o índice da montanha na parte inferior
         index_text = small_font.render(str(i), True, BLACK)
         screen.blit(index_text, (peak_x - 10, HEIGHT - 20))
 
 
-# Function to shoot and destroy mountain
+# Função para simular laser disparado na montanha
 def shoot_ray(mountain_index, heights):
     mountain_width = WIDTH // len(heights)
     mountain_height = heights[mountain_index]
 
-    # Draw ray (red line) from the blue square at the top center
+    # Desenhar raio vermelho do topo da tela até o pico da montanha
     ray_origin = (WIDTH // 2, 50)
     mountain_center = (mountain_index * mountain_width + mountain_width // 2,
                        HEIGHT - mountain_height)
 
     pygame.draw.line(screen, RED, ray_origin, mountain_center, 5)
     pygame.display.update()
-    pygame.time.delay(1000)  # Longer delay for ray effect (1.5 seconds)
+    pygame.time.delay(1000) # Duração do raio
 
 
-# Function to draw the blue player square at the top
+# Função para desenhar o laser
 def draw_player():
     player_width = 50
     pygame.draw.rect(
@@ -100,42 +100,42 @@ def main():
     clock = pygame.time.Clock()
     level = 1
 
-    # Generate random mountains
+    # Gerar número de montanhas aleatórias
     num_mountains = random.randint(
-        MIN_WIDTH, MAX_WIDTH)  # Random number of mountains between 3 and 10
+        MIN_WIDTH, MAX_WIDTH)
     heights = generate_mountains(num_mountains)
 
     while running:
         screen.fill(WHITE)
 
-        # Draw mountains with peaks and outlines
+        # Desenhar montanhas
         draw_mountains(heights)
 
-        # Draw the player (blue square at the top)
+        # Desenhar laser
         draw_player()
 
-        # Display level passed
+        # Mostrar nível atual
         level_text = font.render(f"Level: {level}", True, (0, 0, 0))
         screen.blit(level_text, (WIDTH - 150, 10))
 
         pygame.display.update()
-
-        # Player inputs the index of the tallest mountain
-        tallest_height = max(heights)
+        
         print(f"Altura das Montanhas: {heights}")
-
+        
+        # Jogador escolhe a montanha mais alta
         player_input = disparaMontanhaMaisAlta(heights)
-
+        
         print(f"A montanha escolhida foi: {player_input}")
 
         # Check if the player input is correct
         try:
+            tallest_height = max(heights)
             if heights[int(player_input)] == tallest_height:
                 shoot_ray(player_input,
-                          heights)  # Simulate shooting the mountain
+                          heights)  # Simula o laser disparado na montanha
                 heights[player_input] = math.floor(
                     heights[player_input] /
-                    2)  # Destroy the mountain (reduce its height)
+                    2)  # Reduz a altura da montanha pela metade
             else:
                 print("Montanha Errada!")
         except ValueError:
@@ -143,24 +143,22 @@ def main():
         except IndexError:
             print("Montanha Invalida!")
 
-        # Check if all mountains are destroyed (heights == 0)
+        # Verifica se todas as montanhas foram destruídas
         if all(height == 0 for height in heights):
-            # Display "YOU WIN" message
             screen.fill(WHITE)
-            win_text = win_font.render("YOU WIN!", True, BLACK)
+            win_text = win_font.render("GANHASTE!", True, BLACK)
             screen.blit(win_text, (WIDTH // 2 - 150, HEIGHT // 2 - 50))
             pygame.display.update()
-            pygame.time.delay(10000)  # Pause for 5 seconds
+            pygame.time.delay(10000)  # Espera 10 segundos
             running = False
 
-        # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
                 sys.exit()
 
-        clock.tick(60)  # Limit the frame rate to 60 FPS
+        clock.tick(60)  # 60 FPS
 
 
 if __name__ == "__main__":
