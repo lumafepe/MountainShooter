@@ -10,7 +10,7 @@ Deves editar a função `disparaMontanhaMaisAlta` no ficheiro `preencher.py` de 
 
 ## Input
 
-Uma lista com a altura das montanhas da região
+Uma lista com a altura das montanhas da região.
 
 ## Output
 
