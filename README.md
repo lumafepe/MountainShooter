@@ -20,9 +20,11 @@ Um número que corresponde ao índice na lista da montanha com a maior altura.
 ## Exemplo 1
 
 Input : ```[10,20,30,40,30,20,10]```
+
 Output : ```3```
 
 ## Exemplo 2
 
 Input : ```[10,20,30,30,30,20,10]```
+
 Output : ```2``` ou ```3``` ou ```4```
